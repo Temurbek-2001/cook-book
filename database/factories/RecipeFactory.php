@@ -5,6 +5,8 @@ namespace Database\Factories;
 use App\Models\Recipe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Models\Category;
 
 class RecipeFactory extends Factory
 {
