@@ -1,3 +1,4 @@
+
 @extends('layouts.recipe')
 
 @section('title', 'All Recipes')

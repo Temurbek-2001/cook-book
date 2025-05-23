@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RecipeController extends Controller
 {
+
     public function index()
     {
         $recipes = Recipe::with(['category', 'user'])->latest()->paginate(10);
@@ -98,3 +99,4 @@ class RecipeController extends Controller
         return redirect()->route('recipes.index')->with('success', 'Recipe deleted successfully.');
     }
 }
+
