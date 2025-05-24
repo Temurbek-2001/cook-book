@@ -11,7 +11,7 @@
         <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             Explore our collection of delicious recipes from around the world, shared by passionate home cooks.
         </p>
-        <a href="{{ route('recipes.create') }}" 
+        <a href="{{ auth()->check() ? route('recipes.create') : route('login') }}"
            class="inline-flex items-center px-8 py-4 bg-white text-purple-600 font-semibold rounded-full hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-lg">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
