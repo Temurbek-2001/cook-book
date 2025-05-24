@@ -146,19 +146,19 @@
                 </div>
                 <div class="flex-1">
                     <div class="text-lg font-bold text-green-600">
-                        {{ $favoriteRecipes->where('difficulty', 'easy')->count() }}
+                        {{ $favoriteRecipes->where('difficulty_level', 'easy')->count() }}
                     </div>
                     <div class="text-gray-500">Easy Recipes</div>
                 </div>
                 <div class="flex-1">
                     <div class="text-lg font-bold text-orange-500">
-                        {{ $favoriteRecipes->where('difficulty', 'medium')->count() }}
+                        {{ $favoriteRecipes->where('difficulty_level', 'medium')->count() }}
                     </div>
                     <div class="text-gray-500">Medium Recipes</div>
                 </div>
                 <div class="flex-1">
                     <div class="text-lg font-bold text-red-500">
-                        {{ $favoriteRecipes->where('difficulty', 'hard')->count() }}
+                        {{ $favoriteRecipes->where('difficulty_level', 'hard')->count() }}
                     </div>
                     <div class="text-gray-500">Hard Recipes</div>
                 </div>
