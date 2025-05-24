@@ -25,19 +25,23 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     @if($recipes->count())
         <!-- Stats Bar -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-purple-600">{{ $recipes->total() }}</div>
-                    <div class="text-gray-600">Total Recipes</div>
+        <div class="bg-white rounded-2xl shadow-md p-4 mb-8">
+            <div class="flex flex-row justify-between items-center text-center gap-2 text-xs sm:text-sm md:text-base">
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-purple-600">{{ $recipes->total() }}</div>
+                    <div class="text-gray-500">Total Recipes</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600">{{ $recipes->where('difficulty_level', 'easy')->count() }}</div>
-                    <div class="text-gray-600">Easy Recipes</div>
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-green-600">
+                        {{ $recipes->where('difficulty_level', 'easy')->count() }}
+                    </div>
+                    <div class="text-gray-500">Easy Recipes</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-orange-600">{{ $recipes->unique('category_id')->count() }}</div>
-                    <div class="text-gray-600">Categories</div>
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-orange-500">
+                        {{ $recipes->unique('category_id')->count() }}
+                    </div>
+                    <div class="text-gray-500">Categories</div>
                 </div>
             </div>
         </div>
