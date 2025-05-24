@@ -27,13 +27,18 @@ class Recipe extends Model
     protected $casts = [
         'ingredients' => 'array',
     ];
-
+    
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-   public function favorites(): BelongsToMany
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites', 'recipe_id', 'user_id')->withTimestamps();
     }
