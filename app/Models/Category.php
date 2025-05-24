@@ -20,4 +20,12 @@ class Category extends Model
       {
             return $this->hasMany(Recipe::class);
       }
+      
+      /**
+       * Get the count of recipes in this category.
+       */
+      public function getRecipesCountAttribute()
+      {
+            return $this->recipes()->count();
+      }
 }
