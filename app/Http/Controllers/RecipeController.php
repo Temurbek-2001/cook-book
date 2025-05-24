@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class RecipeController extends Controller
 {
-
     public function index()
     {
         $recipes = Recipe::with(['category', 'user'])->latest()->paginate(10);
@@ -41,7 +40,7 @@ class RecipeController extends Controller
 
         Recipe::create([
             ...$validated,
-            'ingredients' => json_encode($validated['ingredients']),
+            'ingredients' => $validated['ingredients'], // ✅ Let Laravel handle it
             'image_path' => $path,
             'user_id' => Auth::id(),
         ]);
@@ -86,7 +85,7 @@ class RecipeController extends Controller
 
         $recipe->update([
             ...$validated,
-            'ingredients' => json_encode($validated['ingredients']),
+            'ingredients' => $validated['ingredients'], // ✅ No json_encode
         ]);
 
         return redirect()->route('recipes.index')->with('success', 'Recipe updated successfully.');
@@ -99,4 +98,3 @@ class RecipeController extends Controller
         return redirect()->route('recipes.index')->with('success', 'Recipe deleted successfully.');
     }
 }
-

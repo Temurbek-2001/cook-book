@@ -28,6 +28,7 @@ class Recipe extends Model
         'ingredients' => 'array',
     ];
     
+    
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
