@@ -57,5 +57,21 @@ class Recipe extends Model
     {
         return $this->preparation_time + $this->cooking_time;
     }
+
+    /**
+     * Get the users who have favorited this recipe.
+     */
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+    
+    /**
+     * Get the total number of favorites for this recipe.
+     */
+    public function getFavoritesCountAttribute()
+    {
+        return $this->favorites()->count();
+    }
 }
 

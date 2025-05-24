@@ -148,45 +148,155 @@
 
 @auth
 <script>
-async function toggleFavorite(recipeId) {
-    try {
-        const response = await fetch(`/recipes/${recipeId}/favorite`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-        
-        const data = await response.json();
-        const btn = document.getElementById('favorite-btn');
-        const text = document.getElementById('favorite-text');
-        const icon = btn.querySelector('svg');
-        
-        if (data.favorited) {
-            btn.className = 'flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-200 bg-red-100 text-red-600';
-            text.textContent = 'Favorited';
-            icon.setAttribute('fill', 'currentColor');
-        } else {
-            btn.className = 'flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-200 bg-gray-100 text-gray-600 hover:bg-gray-200';
-            text.textContent = 'Add to Favorites';
-            icon.setAttribute('fill', 'none');
+/**
+ * Toggle favorite status for a recipe
+ * @param {number} recipeId - The ID of the recipe to toggle
+ */
+function toggleFavorite(recipeId) {
+    const favoriteBtn = document.getElementById('favorite-btn');
+    const favoriteText = document.getElementById('favorite-text');
+    const heartIcon = favoriteBtn.querySelector('svg');
+    
+    // Disable button during request
+    favoriteBtn.disabled = true;
+    favoriteBtn.style.opacity = '0.6';
+    
+    fetch(`/recipes/${recipeId}/favorite/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
         }
-        
-        // Show a brief success message
-        const message = document.createElement('div');
-        message.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-        message.textContent = data.message;
-        document.body.appendChild(message);
-        
-        setTimeout(() => {
-            message.remove();
-        }, 3000);
-        
-    } catch (error) {
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update button appearance
+            if (data.is_favorited) {
+                favoriteBtn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                favoriteBtn.classList.add('bg-red-100', 'text-red-600');
+                heartIcon.setAttribute('fill', 'currentColor');
+                favoriteText.textContent = 'Favorited';
+            } else {
+                favoriteBtn.classList.remove('bg-red-100', 'text-red-600');
+                favoriteBtn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                heartIcon.setAttribute('fill', 'none');
+                favoriteText.textContent = 'Add to Favorites';
+            }
+            
+            // Show success message (optional)
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'An error occurred', 'error');
+        }
+    })
+    .catch(error => {
         console.error('Error:', error);
-    }
+        showNotification('An error occurred while updating favorites', 'error');
+    })
+    .finally(() => {
+        // Re-enable button
+        favoriteBtn.disabled = false;
+        favoriteBtn.style.opacity = '1';
+    });
+}
+
+/**
+ * Show notification message
+ * @param {string} message - The message to display
+ * @param {string} type - The type of notification ('success' or 'error')
+ */
+function showNotification(message, type = 'success') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full ${
+        type === 'success' 
+            ? 'bg-green-500 text-white' 
+            : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Add event listeners for favorite buttons on recipe list pages
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle favorite buttons in recipe cards (for index pages)
+    const favoriteCards = document.querySelectorAll('[data-favorite-recipe]');
+    
+    favoriteCards.forEach(card => {
+        const recipeId = card.dataset.favoriteRecipe;
+        const favoriteBtn = card.querySelector('.favorite-btn');
+        
+        if (favoriteBtn) {
+            favoriteBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFavoriteCard(recipeId, card);
+            });
+        }
+    });
+});
+
+/**
+ * Toggle favorite for recipe cards (used in recipe listings)
+ * @param {number} recipeId - The ID of the recipe
+ * @param {Element} card - The card element containing the recipe
+ */
+function toggleFavoriteCard(recipeId, card) {
+    const favoriteBtn = card.querySelector('.favorite-btn');
+    const heartIcon = favoriteBtn.querySelector('svg');
+    
+    favoriteBtn.disabled = true;
+    favoriteBtn.style.opacity = '0.6';
+    
+    fetch(`/recipes/${recipeId}/favorite/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.is_favorited) {
+                favoriteBtn.classList.add('text-red-500');
+                heartIcon.setAttribute('fill', 'currentColor');
+            } else {
+                favoriteBtn.classList.remove('text-red-500');
+                heartIcon.setAttribute('fill', 'none');
+            }
+            
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'An error occurred', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred while updating favorites', 'error');
+    })
+    .finally(() => {
+        favoriteBtn.disabled = false;
+        favoriteBtn.style.opacity = '1';
+    });
 }
 </script>
 @endauth

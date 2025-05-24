@@ -25,19 +25,23 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     @if($recipes->count())
         <!-- Stats Bar -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-purple-600">{{ $recipes->total() }}</div>
-                    <div class="text-gray-600">Total Recipes</div>
+        <div class="bg-white rounded-2xl shadow-md p-4 mb-8">
+            <div class="flex flex-row justify-between items-center text-center gap-2 text-xs sm:text-sm md:text-base">
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-purple-600">{{ $recipes->total() }}</div>
+                    <div class="text-gray-500">Total Recipes</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-green-600">{{ $recipes->where('difficulty_level', 'easy')->count() }}</div>
-                    <div class="text-gray-600">Easy Recipes</div>
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-green-600">
+                        {{ $recipes->where('difficulty_level', 'easy')->count() }}
+                    </div>
+                    <div class="text-gray-500">Easy Recipes</div>
                 </div>
-                <div class="text-center">
-                    <div class="text-3xl font-bold text-orange-600">{{ $recipes->unique('category_id')->count() }}</div>
-                    <div class="text-gray-600">Categories</div>
+                <div class="flex-1">
+                    <div class="text-lg font-bold text-orange-500">
+                        {{ $recipes->unique('category_id')->count() }}
+                    </div>
+                    <div class="text-gray-500">Categories</div>
                 </div>
             </div>
         </div>
@@ -45,7 +49,7 @@
         <!-- Recipe Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             @foreach($recipes as $recipe)
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover" data-favorite-recipe="{{ $recipe->id }}">
                     <!-- Image Container -->
                     <div class="relative h-48 overflow-hidden">
                         <img
@@ -80,13 +84,29 @@
                         </div>
 
                         <!-- Favorite Button -->
-                        <div class="absolute bottom-4 right-4">
-                            <button class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 group">
-                                <svg class="w-5 h-5 text-gray-400 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.682l-1.318-1.364a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                            </button>
-                        </div>
+                        @auth
+                            <div class="absolute bottom-4 right-4">
+                                <button class="favorite-btn w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 group {{ $recipe->isFavoritedBy(auth()->user()) ? 'text-red-500' : 'text-gray-400' }}"
+                                        title="{{ $recipe->isFavoritedBy(auth()->user()) ? 'Remove from favorites' : 'Add to favorites' }}">
+                                    <svg class="w-5 h-5 transition-colors" 
+                                        fill="{{ $recipe->isFavoritedBy(auth()->user()) ? 'currentColor' : 'none' }}" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.682l-1.318-1.364a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        @else
+                            <div class="absolute bottom-4 right-4">
+                                <a href="{{ route('login') }}" 
+                                class="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 group text-gray-400"
+                                title="Login to add to favorites">
+                                    <svg class="w-5 h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.682l-1.318-1.364a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        @endauth
                     </div>
 
                     <!-- Card Content -->
@@ -122,18 +142,31 @@
                             </div>
                         </div>
                         
+                        <!-- Stats Row -->
+                        @auth
+                            <div class="flex items-center justify-between text-xs text-gray-500 mb-4">
+                                <span class="flex items-center">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.682l-1.318-1.364a4.5 4.5 0 00-6.364 0z"/>
+                                    </svg>
+                                    {{ $recipe->favorites()->count() }} favorites
+                                </span>
+                                <span>{{ $recipe->created_at->diffForHumans() }}</span>
+                            </div>
+                        @endif
+                        
                         <!-- Action Buttons -->
                         <div class="flex items-center justify-between">
                             <a href="{{ route('recipes.show', $recipe) }}"
-                               class="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-center py-2.5 px-4 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 mr-2">
+                            class="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-center py-2.5 px-4 rounded-xl font-medium transition-all duration-200 transform hover:scale-105 mr-2">
                                 View Recipe
                             </a>
                             
                             <div class="flex space-x-2">
                                 @can('update', $recipe)
                                     <a href="{{ route('recipes.edit', $recipe) }}"
-                                       class="w-10 h-10 bg-yellow-100 hover:bg-yellow-200 text-yellow-600 rounded-xl flex items-center justify-center transition-colors duration-200"
-                                       title="Edit Recipe">
+                                    class="w-10 h-10 bg-yellow-100 hover:bg-yellow-200 text-yellow-600 rounded-xl flex items-center justify-center transition-colors duration-200"
+                                    title="Edit Recipe">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
@@ -142,7 +175,7 @@
                                 
                                 @can('delete', $recipe)
                                     <form action="{{ route('recipes.destroy', $recipe) }}" method="POST" class="inline"
-                                          onsubmit="return confirm('🗑️ Delete this delicious recipe?\n\nThis action cannot be undone!')">
+                                        onsubmit="return confirm('🗑️ Delete this delicious recipe?\n\nThis action cannot be undone!')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -193,4 +226,158 @@
         </div>
     @endif
 </div>
+@auth
+<script>
+/**
+ * Toggle favorite status for a recipe
+ * @param {number} recipeId - The ID of the recipe to toggle
+ */
+function toggleFavorite(recipeId) {
+    const favoriteBtn = document.getElementById('favorite-btn');
+    const favoriteText = document.getElementById('favorite-text');
+    const heartIcon = favoriteBtn.querySelector('svg');
+    
+    // Disable button during request
+    favoriteBtn.disabled = true;
+    favoriteBtn.style.opacity = '0.6';
+    
+    fetch(`/recipes/${recipeId}/favorite/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update button appearance
+            if (data.is_favorited) {
+                favoriteBtn.classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                favoriteBtn.classList.add('bg-red-100', 'text-red-600');
+                heartIcon.setAttribute('fill', 'currentColor');
+                favoriteText.textContent = 'Favorited';
+            } else {
+                favoriteBtn.classList.remove('bg-red-100', 'text-red-600');
+                favoriteBtn.classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
+                heartIcon.setAttribute('fill', 'none');
+                favoriteText.textContent = 'Add to Favorites';
+            }
+            
+            // Show success message (optional)
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'An error occurred', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred while updating favorites', 'error');
+    })
+    .finally(() => {
+        // Re-enable button
+        favoriteBtn.disabled = false;
+        favoriteBtn.style.opacity = '1';
+    });
+}
+
+/**
+ * Show notification message
+ * @param {string} message - The message to display
+ * @param {string} type - The type of notification ('success' or 'error')
+ */
+function showNotification(message, type = 'success') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full ${
+        type === 'success' 
+            ? 'bg-green-500 text-white' 
+            : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Add event listeners for favorite buttons on recipe list pages
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle favorite buttons in recipe cards (for index pages)
+    const favoriteCards = document.querySelectorAll('[data-favorite-recipe]');
+    
+    favoriteCards.forEach(card => {
+        const recipeId = card.dataset.favoriteRecipe;
+        const favoriteBtn = card.querySelector('.favorite-btn');
+        
+        if (favoriteBtn) {
+            favoriteBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFavoriteCard(recipeId, card);
+            });
+        }
+    });
+});
+
+/**
+ * Toggle favorite for recipe cards (used in recipe listings)
+ * @param {number} recipeId - The ID of the recipe
+ * @param {Element} card - The card element containing the recipe
+ */
+function toggleFavoriteCard(recipeId, card) {
+    const favoriteBtn = card.querySelector('.favorite-btn');
+    const heartIcon = favoriteBtn.querySelector('svg');
+    
+    favoriteBtn.disabled = true;
+    favoriteBtn.style.opacity = '0.6';
+    
+    fetch(`/recipes/${recipeId}/favorite/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.is_favorited) {
+                favoriteBtn.classList.add('text-red-500');
+                heartIcon.setAttribute('fill', 'currentColor');
+            } else {
+                favoriteBtn.classList.remove('text-red-500');
+                heartIcon.setAttribute('fill', 'none');
+            }
+            
+            showNotification(data.message, 'success');
+        } else {
+            showNotification(data.message || 'An error occurred', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred while updating favorites', 'error');
+    })
+    .finally(() => {
+        favoriteBtn.disabled = false;
+        favoriteBtn.style.opacity = '1';
+    });
+}
+</script>
+@endauth
 @endsection
