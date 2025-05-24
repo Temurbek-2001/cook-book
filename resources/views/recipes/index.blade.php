@@ -49,7 +49,7 @@
                     <!-- Image Container -->
                     <div class="relative h-48 overflow-hidden">
                         <img
-                            src="{{ asset('images/default-recipe.jpg')  }}"
+                            src="{{ $recipe->image_path ? asset('storage/' . $recipe->image_path) : asset('images/default-recipe.jpg') }}" 
                             alt="{{ $recipe->title }}"
                             class="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                             onerror="this.src='https://via.placeholder.com/400x300/f1f5f9/64748b?text=Recipe'"

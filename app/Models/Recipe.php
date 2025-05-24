@@ -24,6 +24,11 @@ class Recipe extends Model
         'category_id',
     ];
 
+    protected $casts = [
+        'ingredients' => 'array',
+    ];
+    
+    
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
@@ -37,6 +42,20 @@ class Recipe extends Model
     public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'favorites', 'recipe_id', 'user_id')->withTimestamps();
+    }
+
+    public function isFavoritedBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return $this->favorites()->where('user_id', $user->id)->exists();
+    }
+
+    public function getTotalTimeAttribute(): int
+    {
+        return $this->preparation_time + $this->cooking_time;
     }
 }
 
