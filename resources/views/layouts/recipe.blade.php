@@ -96,7 +96,7 @@
                         </svg>
                         <span>Browse Recipes</span>
                     </a>
-                    <a href="{{ auth()->check() ? route('recipes.create') : route('login') }}
+                    <a href="{{ auth()->check() ? route('recipes.create') : route('login') }}"
                        class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 font-medium transition-all duration-200 transform hover:scale-105 shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
