@@ -24,11 +24,11 @@ The Recipe Organizer is a web application designed to help users manage their fa
 
 ## 👥 Team Members
 
-- **[Student_ID_1]** - Project Manager & Backend Developer
-- **[Student_ID_2]** - Backend Developer & Database Specialist  
-- **[Student_ID_3]** - Frontend Developer & UI/UX Designer
+- **39293** - Project Manager & Backend Developer
+- **41843** - Backend Developer & Database Specialist  
+- **37858** - Frontend Developer & UI/UX Designer
 
-*Repository Name: `[Student_ID_1]_[Student_ID_2]_[Student_ID_3]_[Student_ID_4]_[Student_ID_5]`*
+*Repository Name: `39293_41843_37858`*
 
 ## ✨ Features
 
@@ -74,9 +74,9 @@ The application follows the **Model-View-Controller (MVC)** pattern with Laravel
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Presentation  │    │   Application   │    │      Data       │
-│   Layer (View)  │    │ Layer (Controller)│  │  Layer (Model)  │
+│   Layer (View)  │    │ Layer (Control.)│    │  Layer (Model)  │
 │                 │    │                 │    │                 │
-│ - Blade Templates│◄──►│ - Controllers   │◄──►│ - Eloquent ORM  │
+│ - Blade Template│◄──►│ - Controllers   │◄──►│ - Eloquent ORM  │
 │ - Tailwind CSS  │    │ - Middleware    │    │ - Database      │
 │ - Alpine.js     │    │ - Validation    │    │ - Migrations    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
@@ -102,8 +102,8 @@ The application follows the **Model-View-Controller (MVC)** pattern with Laravel
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/Temurbek-2001/cook-book.git
-   cd cook-book
+   git clone https://github.com/Temurbek-2001/39293_41843_37858.git
+   cd 39293_41843_37858
    ```
 
 2. **Install PHP Dependencies**
